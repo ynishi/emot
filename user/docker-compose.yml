@@ -1,0 +1,21 @@
+version: '2'
+services:
+  user:
+    image: alpine:3.7
+    volumes:
+      - ./server:/go
+    working_dir: /go
+    command: ./server
+    ports:
+      - "1513:1513"
+  userproxy:
+    image: apline:3.7
+    volumes:
+      - ./server:/go
+    working_dir: /go
+    command: ./proxy
+    depends_on:
+      - user
+    links: user 
+    ports:
+      - "3000:3000"

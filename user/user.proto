@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+service UserService {
+  rpc add(UserPostRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      post: "/v1/emot/user"
+      body: "*"
+    };
+  }
+  rpc get(UserGetRequest) returns (User) {
+    option (google.api.http) = {
+      get: "/v1/emot/user/{name}"
+    };
+  }
+  rpc update(UserPostRequest) returns (UserResponse) {}
+  rpc delete(UserPostRequest) returns (UserResponse) {}
+  rpc auth(UserAuthRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      post: "/v1/emot/userauth/{name}"
+      body: "*"
+    };
+  }
+}
+
+message User {
+  string name = 1;
+  string email = 2;
+  string hash = 3;
+}
+
+message UserGetRequest {
+  string name = 1;
+}
+
+message UserPostRequest {
+  User user = 1;
+  string password = 2;
+}
+
+message UserResponse {
+  string name = 1;
+}
+
+message UserAuthRequest {
+  string name = 1;
+  string password = 2;
+}

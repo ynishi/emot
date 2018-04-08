@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+service HappyService {
+  rpc GetHappyWord(HappyRequest) returns (HappyResponse);
+}
+
+message HappyRequest{
+  string query = 1;
+}
+
+message HappyResponse{
+  string status = 1;
+  Happy happy = 2;
+}
+
+message Happy {
+  string word = 1;
+}
