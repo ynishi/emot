@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
-	"math/rand"
+
+	"github.com/syndtr/goleveldb/leveldb"
+	"github.com/syndtr/goleveldb/leveldb/util"
+
 	"net"
 
 	pb "github.com/ynishi/emot/happy"
@@ -10,28 +13,40 @@ import (
 )
 
 type happyServiceServer struct {
-	happies []*pb.Happy
+	db *leveldb.DB
 }
 
-func (s *happyServiceServer) GetHappyWord(context.Context, *pb.HappyRequest) (*pb.HappyResponse, error) {
-	return &pb.HappyResponse{
-		"success",
-		s.happies[rand.Intn(len(s.happies))],
-	}, nil
+func (s *happyServiceServer) Get(ctx context.Context, req *pb.HappyRequest) (*pb.HappyResponse, error) {
+
+	iter := s.db.NewIterator(util.BytesPrefix([]byte(req.Query)), nil)
+	for iter.Next() {
+		return &pb.HappyResponse{
+			Word: string(iter.Value()),
+		}, nil
+	}
+	iter.Release()
+	err := iter.Error()
+	return nil, err
 }
 
-func newServer() *happyServiceServer {
-	s := &happyServiceServer{happies: make([]*pb.Happy, 0)}
-	s.happies = append(s.happies, &pb.Happy{"happy1"})
+func newServer(db *leveldb.DB) *happyServiceServer {
+	initdb(db)
+	s := &happyServiceServer{db: db}
 	return s
 }
 
+func initdb(db *leveldb.DB) error {
+	db.Put([]byte("key"), []byte("value"), nil)
+	return nil
+}
+
 func main() {
-	lis, err := net.Listen("tcp", ":1315")
+	lis, err := net.Listen("tcp", ":1314")
 	if err != nil {
 		panic(err)
 	}
+	db, err := leveldb.OpenFile("words.db", nil)
 	grpcServer := grpc.NewServer()
-	pb.RegisterHappyServiceServer(grpcServer, newServer())
+	pb.RegisterHappyServiceServer(grpcServer, newServer(db))
 	grpcServer.Serve(lis)
 }

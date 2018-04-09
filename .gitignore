@@ -16,3 +16,5 @@
 .idea/
 
 *.db/
+*/server
+*/proxy

@@ -1,7 +1,13 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+
 service HappyService {
-  rpc GetHappyWord(HappyRequest) returns (HappyResponse);
+  rpc Get(HappyRequest) returns (HappyResponse) {
+    option (google.api.http) = {
+      get: "/v1/emot/happy"
+    };
+  }
 }
 
 message HappyRequest{
@@ -9,10 +15,5 @@ message HappyRequest{
 }
 
 message HappyResponse{
-  string status = 1;
-  Happy happy = 2;
-}
-
-message Happy {
   string word = 1;
 }
