@@ -3,17 +3,51 @@ syntax = "proto3";
 import "google/api/annotations.proto";
 
 service HappyService {
-  rpc Get(HappyRequest) returns (HappyResponse) {
+  rpc Get(GetRequest) returns (GetResponse) {
     option (google.api.http) = {
       get: "/v1/emot/happy"
     };
   }
+  rpc Post(PostRequest) returns (PostResponse) {
+    option (google.api.http) = {
+      post: "/v1/emot/happy/{key}"
+      body: "*"
+    };
+  }
+  rpc ListTag(ListTagRequest) returns (stream ListTagResponse) {
+    option (google.api.http) = {
+      get: "/v1/emot/happy/tag"
+    };
+  }
+
 }
 
-message HappyRequest{
+message ListTagRequest {
   string query = 1;
+  string page = 2;
+  string num = 3;
 }
 
-message HappyResponse{
+message ListTagResponse {
+  string tag = 1;
+  int32 num = 2;
+}
+
+message GetRequest{
+  string query = 1;
+  string tag = 2;
+}
+
+message GetResponse{
   string word = 1;
+}
+
+message PostRequest{
+  string key = 1;
+  string word = 2;
+  string tag = 3;
+}
+
+message PostResponse{
+  string key = 1;
 }

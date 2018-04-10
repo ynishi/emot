@@ -9,7 +9,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	gw "github.com/ynishi/emot/user"
+	gw "github.com/ynishi/emot/happy"
 )
 
 func run() error {
@@ -19,7 +19,7 @@ func run() error {
 
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	err := gw.RegisterUserServiceHandlerFromEndpoint(ctx, mux, "localhost:1314", opts)
+	err := gw.RegisterHappyServiceHandlerFromEndpoint(ctx, mux, "localhost:1314", opts)
 	if err != nil {
 		return err
 	}
